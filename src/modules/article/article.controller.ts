@@ -1,19 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, UseInterceptors, UploadedFile, UseGuards } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
-import { ApiBody, ApiConsumes, ApiInternalServerErrorResponse, ApiNoContentResponse, ApiOkResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiInternalServerErrorResponse, ApiNoContentResponse, ApiOkResponse } from '@nestjs/swagger';
 import { ArticleResponsedto } from './dto/article-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import  { diskStorage}from "multer"
+import { CreateArticlefileDto } from './dto/article-file.dto';
 import path from "path"
+import { AuthGuard } from 'src/common/guards/auth-guards';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { RoleUser } from 'src/shared/enums/roles.enum';
+
+
+ @ApiBearerAuth("JWT-auth")
 @ApiInternalServerErrorResponse({description : "Internal server error"})
 @Controller('article')
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
+  @UseGuards(AuthGuard , RolesGuard)
+  @Roles(RoleUser.ADMIN  , RoleUser.SUPERADMIN)
 @ApiOkResponse()
-  @ApiNoContentResponse({description : "Article not found"})
-  @ApiBody({ })
+  @ApiBody({ type :CreateArticlefileDto})
 @HttpCode(201)
   @Post()
   @ApiConsumes("multipart/form-data")
@@ -49,6 +58,8 @@ storage : diskStorage({
   findOne(@Param('id') id: string) {
     return this.articleService.findOne(+id);
   }
+    @UseGuards(AuthGuard , RolesGuard)
+  @Roles(RoleUser.ADMIN  , RoleUser.USER)
   @ApiOkResponse({description : "Updated"})
     @ApiNoContentResponse({description : "Article not found"})
 @HttpCode(200)
@@ -56,6 +67,8 @@ storage : diskStorage({
   update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto) {
     return this.articleService.update(+id, updateArticleDto);
   }
+    @UseGuards(AuthGuard , RolesGuard)
+  @Roles(RoleUser.ADMIN  , RoleUser.SUPERADMIN)
    @ApiOkResponse({description : "Deleted"})
     @ApiNoContentResponse({description : "Article not found"})
 @HttpCode(200)

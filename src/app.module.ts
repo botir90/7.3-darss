@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Auth } from './modules/auth/entities/auth.entity';
 import { ArticleModule } from './modules/article/article.module';
 import { Article } from './modules/article/entities/article.entity';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './common/guards/roles.guard';
 
 @Module({
   imports: [

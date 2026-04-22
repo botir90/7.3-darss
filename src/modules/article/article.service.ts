@@ -11,7 +11,7 @@ export class ArticleService {
     @InjectRepository(Article)private articleRepo: Repository<Article>){}
    async create(createArticleDto: CreateArticleDto , file :Express.Multer.File) {
     const article =  this.articleRepo.create(createArticleDto )
-article.backgroundimagr = `http://localhost:4001/uploads`+ file
+article.backgroundimagr = `http://localhost:4001/uploads/${file.fieldname}`
     return  await this.articleRepo.save(article)
   }
 

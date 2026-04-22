@@ -88,7 +88,7 @@ export class AuthService {
       const time = Date.now() + 120000
 
       await this.nodemailer.sendMail({
-        from: "qodirberganovbotir@gmail.com",  // ✅ to'g'rilandi
+        from: "qodirberganovbotir@gmail.com",  
         to: email,
         subject: "Tasdiqlash kodi",
         html: `<b>Sizning kodingiz: ${otp}</b>`
