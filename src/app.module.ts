@@ -1,29 +1,32 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
-// import { ArticleModule } from './modules/article/article.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Auth } from './modules/auth/entities/auth.entity';
-
+import { ArticleModule } from './modules/article/article.module';
+import { Article } from './modules/article/entities/article.entity';
 
 @Module({
-  imports: [ConfigModule.forRoot({envFilePath:".env",isGlobal:true}),
-    TypeOrmModule.forRoot({
-      type:"postgres",
-      host:"localhost",
-      port:5432,
-      username:"postgres",
-      database:String(process.env.DB_NAME as string),
-      password:String(process.env.DB_PASSWORD as string),
-      entities:[Auth],
-      synchronize:true,
-      logging:false
-
+  imports: [
+    ConfigModule.forRoot({ envFilePath: ".env", isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: "postgres",
+        host: "localhost",
+        port: 5000,
+        username: "postgres",
+        database: config.get<string>("DB_NAME"),
+        password: config.get<string>("DB_PASSWORD"),
+        entities: [Auth , Article],
+        synchronize: true,
+        logging: false,
+      }),
     }),
     AuthModule,
-    // ArticleModule
+    ArticleModule
   ],
-  
   controllers: [],
   providers: [],
 })
