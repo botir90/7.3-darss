@@ -1,8 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString } from "class-validator";
+import { IsInt, IsNumber, IsString } from "class-validator";
 
-export class CreateArticleDto {
-
+export class ArticleResponsedto {
+@IsNumber()
+@ApiProperty({default: 1})
+id! : number
 @IsString()
 @ApiProperty({default :"HTM"})
 title!:string;
@@ -10,4 +12,6 @@ title!:string;
 @IsString()
 @ApiProperty({default: "HTM"})
 content!:string;
+
+
 }
